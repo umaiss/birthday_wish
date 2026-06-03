@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Trophy, HelpCircle, RefreshCw, Volume2, Sparkles } from "lucide-react";
@@ -10,12 +11,13 @@ interface GiftItem {
   name: string;
   emoji: string;
   color: string;
+  image?: string;
 }
 
 const GIFTS: GiftItem[] = [
   { id: "burger", name: "Meg Burger", emoji: "🍔", color: "from-amber-500 to-red-500" },
-  { id: "dryer", name: "Hair Dryer", emoji: "💨", color: "from-blue-400 to-indigo-500" },
-  { id: "lens", name: "Lens", emoji: "📷", color: "from-purple-500 to-pink-500" },
+  { id: "dryer", name: "Hair Dryer", emoji: "💨", color: "from-blue-400 to-indigo-500", image: "/images/hair_dryer.png" },
+  { id: "lens", name: "Lens", emoji: "📷", color: "from-purple-500 to-pink-500", image: "/images/lens.png" },
 ];
 
 const triggerConfetti = () => {
@@ -335,11 +337,23 @@ export default function GiftChallenge() {
                             animate={{ scale: 1.5, y: -40, opacity: 1 }}
                             exit={{ scale: 0, opacity: 0 }}
                             transition={{ type: "spring", stiffness: 150, damping: 10 }}
-                            className="absolute z-10 flex flex-col items-center"
+                            className="absolute z-10 flex flex-col items-center animate-bounce"
                           >
-                            <span className="text-5xl filter drop-shadow-[0_4px_12px_rgba(212,175,55,0.4)] animate-bounce">
-                              {gift.emoji}
-                            </span>
+                            {gift.image ? (
+                              <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-[#d4af37]/30 bg-black/60 shadow-2xl flex items-center justify-center p-1">
+                                <Image
+                                  src={gift.image}
+                                  alt={gift.name}
+                                  fill
+                                  className="object-contain p-1"
+                                  sizes="64px"
+                                />
+                              </div>
+                            ) : (
+                              <span className="text-5xl filter drop-shadow-[0_4px_12px_rgba(212,175,55,0.4)]">
+                                {gift.emoji}
+                              </span>
+                            )}
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -398,8 +412,25 @@ export default function GiftChallenge() {
                   <h3 className="font-cinzel text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">
                     Congratulations!
                   </h3>
-                  <p className="text-white/80 font-light text-sm sm:text-base mb-6">
-                    You won a <span className="font-bold text-[#d4af37] underline decoration-[#ff2a5f] decoration-2 underline-offset-4">{wonItem.name} {wonItem.emoji}</span>!
+                  <p className="text-white/80 font-light text-sm sm:text-base mb-6 flex items-center justify-center gap-2 flex-wrap">
+                    You won a{" "}
+                    <span className="font-bold text-[#d4af37] underline decoration-[#ff2a5f] decoration-2 underline-offset-4 flex items-center gap-2">
+                      {wonItem.name}
+                      {wonItem.image ? (
+                        <span className="relative inline-flex w-6 h-6 rounded-full overflow-hidden border border-[#d4af37]/30 bg-black/40 align-middle">
+                          <Image
+                            src={wonItem.image}
+                            alt={wonItem.name}
+                            fill
+                            className="object-contain p-0.5"
+                            sizes="24px"
+                          />
+                        </span>
+                      ) : (
+                        wonItem.emoji
+                      )}
+                    </span>
+                    !
                   </p>
                   <p className="text-xs text-white/40 italic">
                     (Attempt list: {attempts.join(" → ")})
