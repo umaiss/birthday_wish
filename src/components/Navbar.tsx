@@ -16,7 +16,7 @@ export default function Navbar() {
       }
 
       // Track active section
-      const sections = ["hero", "memories", "challenge", "wishes", "surprise"];
+      const sections = ["hero", "challenge", "wishes", "surprise"];
       const currentScroll = window.scrollY + window.innerHeight / 3;
 
       for (const section of sections) {
@@ -50,7 +50,6 @@ export default function Navbar() {
 
   const navItems = [
     { label: "Home", id: "hero" },
-    { label: "Memories", id: "memories" },
     { label: "Challenge", id: "challenge" },
     { label: "Wishes", id: "wishes" },
     { label: "Surprise", id: "surprise" },

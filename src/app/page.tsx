@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import SmoothScroll from "@/components/SmoothScroll";
 import Hero from "@/components/Hero";
-import Memories from "@/components/Memories";
 import GiftChallenge from "@/components/GiftChallenge";
 import Wishes from "@/components/Wishes";
 import FinalSurprise from "@/components/FinalSurprise";
@@ -37,9 +36,6 @@ export default function Home() {
       <main className="relative flex-1 w-full flex flex-col">
         {/* Hero Landing Stage */}
         <Hero />
-
-        {/* Apple-style horizontal scrolling timeline */}
-        <Memories />
 
         {/* Interactive 3-attempt Gift Challenge Game */}
         <GiftChallenge />
