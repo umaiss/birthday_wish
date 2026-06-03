@@ -37,7 +37,7 @@ export default function Navbar() {
   }, []);
 
   const scrollToSection = (id: string) => {
-    const lenis = (window as any).lenis;
+    const lenis = (window as unknown as { lenis?: { scrollTo: (target: string, options?: { offset?: number; duration?: number }) => void } }).lenis;
     if (lenis) {
       lenis.scrollTo(`#${id}`, { offset: 0, duration: 1.5 });
     } else {
@@ -66,7 +66,7 @@ export default function Navbar() {
         >
           <Sparkles className="w-5 h-5 text-[#d4af37] group-hover:rotate-12 transition-transform duration-300" />
           <span className="font-cinzel tracking-wider text-sm font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent group-hover:from-[#d4af37] group-hover:to-[#ff2a5f]">
-            Huda's Day ❤️
+            {"Huda's Day ❤️"}
           </span>
         </button>
 
@@ -76,8 +76,9 @@ export default function Navbar() {
             <button
               key={item.id}
               onClick={() => scrollToSection(item.id)}
-              className={`text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:text-white ${activeSection === item.id ? "text-[#d4af37]" : "text-white/60"
-                }`}
+              className={`text-xs uppercase tracking-widest font-semibold transition-all duration-300 hover:text-white ${
+                activeSection === item.id ? "text-[#d4af37]" : "text-white/60"
+              }`}
             >
               {item.label}
             </button>

@@ -11,6 +11,8 @@ interface Particle {
   color: string;
   type: "sparkle" | "heart" | "star";
   rotation: number;
+  driftX: number;
+  driftY: number;
 }
 
 export default function CursorSparkle() {
@@ -20,7 +22,9 @@ export default function CursorSparkle() {
   useEffect(() => {
     // Check if device supports hover (desktop)
     const mediaQuery = window.matchMedia("(hover: hover)");
-    setIsMobile(!mediaQuery.matches);
+    requestAnimationFrame(() => {
+      setIsMobile(!mediaQuery.matches);
+    });
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!mediaQuery.matches) return;
@@ -38,6 +42,8 @@ export default function CursorSparkle() {
         color: randomColor,
         type: randomType,
         rotation: Math.random() * 360,
+        driftX: e.clientX + (Math.random() - 0.5) * 50,
+        driftY: e.clientY + (Math.random() - 0.5) * 50 + 20,
       };
 
       setParticles((prev) => [...prev.slice(-15), newParticle]);
@@ -67,8 +73,8 @@ export default function CursorSparkle() {
             animate={{
               opacity: 0,
               scale: 0,
-              x: p.x + (Math.random() - 0.5) * 50,
-              y: p.y + (Math.random() - 0.5) * 50 + 20, // drift downwards
+              x: p.driftX,
+              y: p.driftY, // drift downwards
               rotate: p.rotation + 90,
             }}
             exit={{ opacity: 0 }}

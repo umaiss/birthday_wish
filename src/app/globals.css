@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+@theme {
+  --font-cinzel: var(--font-cinzel), serif;
+  --font-outfit: var(--font-outfit), sans-serif;
+  --animate-beat: beat 1.2s ease-in-out infinite;
+
+  @keyframes beat {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+  }
+}
+
 :root {
   --background: #030303;
   --foreground: #f4f4f5;
