@@ -30,7 +30,7 @@ export default function Hero() {
   useEffect(() => {
     let index = 0;
     const timeout = setInterval(() => {
-      setTypedText((prev) => prev + fullText.charAt(index));
+      setTypedText(fullText.slice(0, index + 1));
       index++;
       if (index >= fullText.length) {
         clearInterval(timeout);
