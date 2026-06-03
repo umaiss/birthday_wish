@@ -9,16 +9,10 @@ function Particles({ count = 250 }) {
   const { mouse } = useThree();
 
   // Create random position coordinates and colors (mix of gold, rose, and white)
-  const [positions, colors] = useMemo(() => {
-    // Pure deterministic pseudo-random number generator (LCG style)
-    let seed = 1;
-    const random = () => {
-      const x = Math.sin(seed++) * 10000;
-      return x - Math.floor(x);
-    };
-
+  const [positions, colors, sizes] = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const cols = new Float32Array(count * 3);
+    const szs = new Float32Array(count);
 
     const themeColors = [
       new THREE.Color("#d4af37"), // Gold
@@ -29,18 +23,21 @@ function Particles({ count = 250 }) {
 
     for (let i = 0; i < count; i++) {
       // Position
-      pos[i * 3] = (random() - 0.5) * 15; // X
-      pos[i * 3 + 1] = (random() - 0.5) * 15; // Y
-      pos[i * 3 + 2] = (random() - 0.5) * 10; // Z
+      pos[i * 3] = (Math.random() - 0.5) * 15; // X
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 15; // Y
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 10; // Z
 
       // Color
-      const color = themeColors[Math.floor(random() * themeColors.length)];
+      const color = themeColors[Math.floor(Math.random() * themeColors.length)];
       cols[i * 3] = color.r;
       cols[i * 3 + 1] = color.g;
       cols[i * 3 + 2] = color.b;
+
+      // Size
+      szs[i] = Math.random() * 0.08 + 0.02;
     }
 
-    return [pos, cols];
+    return [pos, cols, szs];
   }, [count]);
 
   useFrame((state) => {
@@ -90,7 +87,7 @@ export default function ThreeBackground() {
       {/* Background gradients */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.06),transparent_40%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255,42,95,0.06),transparent_45%)]" />
-      
+
       <Canvas
         camera={{ position: [0, 0, 5], fov: 60 }}
         gl={{ antialias: true, alpha: true }}

@@ -24,13 +24,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     rafId = requestAnimationFrame(raf);
 
     // Expose lenis globally for external ScrollTrigger sync if needed
-    const win = window as unknown as { lenis: Lenis | null };
-    win.lenis = lenis;
+    (window as any).lenis = lenis;
 
     return () => {
       lenis.destroy();
       cancelAnimationFrame(rafId);
-      win.lenis = null;
+      (window as any).lenis = null;
     };
   }, []);
 

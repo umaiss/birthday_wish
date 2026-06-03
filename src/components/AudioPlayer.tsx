@@ -3,49 +3,49 @@
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
-// Play ambient chimes using Web Audio API
-const playNote = (
-  ctx: AudioContext,
-  frequency: number,
-  startTime: number,
-  duration: number,
-  type: "sine" | "triangle" = "sine"
-) => {
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  osc.type = type;
-  osc.frequency.setValueAtTime(frequency, startTime);
-
-  // Apply soft attack and decay
-  gain.gain.setValueAtTime(0, startTime);
-  gain.gain.linearRampToValueAtTime(0.06, startTime + 0.05); // low volume
-  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  osc.start(startTime);
-  osc.stop(startTime + duration);
-};
-
-const playChord = (
-  ctx: AudioContext,
-  notes: number[],
-  startTime: number,
-  duration: number
-) => {
-  notes.forEach((freq) => {
-    // Play chord pad with soft triangles
-    playNote(ctx, freq, startTime, duration, "triangle");
-  });
-};
-
 export default function AudioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const schedulerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const schedulerRef = useRef<number | null>(null);
   const isPlayingRef = useRef(false);
+
+  // Play ambient chimes using Web Audio API
+  const playNote = (
+    ctx: AudioContext,
+    frequency: number,
+    startTime: number,
+    duration: number,
+    type: "sine" | "triangle" = "sine"
+  ) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(frequency, startTime);
+
+    // Apply soft attack and decay
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.06, startTime + 0.05); // low volume
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+  };
+
+  const playChord = (
+    ctx: AudioContext,
+    notes: number[],
+    startTime: number,
+    duration: number
+  ) => {
+    notes.forEach((freq) => {
+      // Play chord pad with soft triangles
+      playNote(ctx, freq, startTime, duration, "triangle");
+    });
+  };
 
   useEffect(() => {
     isPlayingRef.current = isPlaying;
@@ -60,8 +60,8 @@ export default function AudioPlayer() {
 
     // Initialize audio context
     if (!audioCtxRef.current) {
-      const webkitCtx = (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      audioCtxRef.current = new (window.AudioContext || webkitCtx)();
+      audioCtxRef.current = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
     }
 
     const ctx = audioCtxRef.current;
@@ -139,7 +139,7 @@ export default function AudioPlayer() {
     playSequence();
 
     // Loop
-    schedulerRef.current = setInterval(playSequence, cycleDuration * 1000);
+    schedulerRef.current = setInterval(playSequence, cycleDuration * 1000) as any;
 
     return () => {
       if (schedulerRef.current) {

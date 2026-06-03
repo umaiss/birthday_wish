@@ -18,29 +18,6 @@ const GIFTS: GiftItem[] = [
   { id: "lens", name: "Lens", emoji: "📷", color: "from-purple-500 to-pink-500" },
 ];
 
-const triggerConfetti = () => {
-  const duration = 3 * 1000;
-  const animationEnd = Date.now() + duration;
-  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
-
-  const randomInRange = (min: number, max: number) => {
-    return Math.random() * (max - min) + min;
-  };
-
-  const interval = setInterval(() => {
-    const timeLeft = animationEnd - Date.now();
-
-    if (timeLeft <= 0) {
-      return clearInterval(interval);
-    }
-
-    const particleCount = 50 * (timeLeft / duration);
-    // Confetti burst from both sides
-    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
-    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-  }, 250);
-};
-
 export default function GiftChallenge() {
   const [attempts, setAttempts] = useState<string[]>([]);
   const [shuffling, setShuffling] = useState(false);
@@ -54,8 +31,8 @@ export default function GiftChallenge() {
   const playAudioEffect = (type: "shuffle" | "open" | "win" | "lose") => {
     if (!soundEnabled) return;
     try {
-      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-      
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+
       if (type === "shuffle") {
         // Swoosh sound
         const osc = ctx.createOscillator();
@@ -117,6 +94,28 @@ export default function GiftChallenge() {
     }
   };
 
+  const triggerConfetti = () => {
+    const duration = 3 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+    const randomInRange = (min: number, max: number) => {
+      return Math.random() * (max - min) + min;
+    };
+
+    const interval: any = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      // Confetti burst from both sides
+      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+    }, 250);
+  };
 
   const startShuffle = () => {
     if (gameState === "finished") return;
@@ -209,7 +208,7 @@ export default function GiftChallenge() {
           </span>
         </h2>
         <p className="text-white/60 font-light text-sm sm:text-base max-w-xl mx-auto">
-          Test your luck! Pick a gift box. If you match the same gift twice in three attempts, {"it's"} yours!
+          Test your luck! Pick a gift box. If you match the same gift twice in three attempts, it's yours!
         </p>
       </div>
 
@@ -225,11 +224,10 @@ export default function GiftChallenge() {
               {Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`h-12 w-24 rounded-xl flex items-center justify-center border text-xs font-semibold tracking-wider transition-all duration-500 ${
-                    attempts[i]
+                  className={`h-12 w-24 rounded-xl flex items-center justify-center border text-xs font-semibold tracking-wider transition-all duration-500 ${attempts[i]
                       ? "border-[#d4af37]/30 bg-[#d4af37]/10 text-white"
                       : "border-white/5 bg-white/5 text-white/30"
-                  }`}
+                    }`}
                 >
                   {attempts[i] ? attempts[i] : `Attempt ${i + 1}`}
                 </div>
@@ -290,9 +288,8 @@ export default function GiftChallenge() {
                 <motion.div
                   layout
                   onClick={() => openBox(idx)}
-                  className={`relative w-44 h-48 flex items-center justify-center cursor-pointer select-none perspective-1000 group ${
-                    isSelectable ? "hover:scale-105" : ""
-                  }`}
+                  className={`relative w-44 h-48 flex items-center justify-center cursor-pointer select-none perspective-1000 group ${isSelectable ? "hover:scale-105" : ""
+                    }`}
                   transition={{ type: "spring", stiffness: 100, damping: 15 }}
                 >
                   <AnimatePresence>
@@ -301,11 +298,10 @@ export default function GiftChallenge() {
 
                     {/* Box Body */}
                     <div
-                      className={`relative w-32 h-32 rounded-2xl flex flex-col justify-end items-center pb-4 transition-all duration-500 shadow-xl border ${
-                        isOpened
+                      className={`relative w-32 h-32 rounded-2xl flex flex-col justify-end items-center pb-4 transition-all duration-500 shadow-xl border ${isOpened
                           ? "bg-gradient-to-br from-[#d4af37]/10 to-[#ff2a5f]/10 border-[#d4af37]/40"
                           : "bg-gradient-to-br from-zinc-800/80 to-zinc-950/80 border-white/10 group-hover:border-white/20"
-                      }`}
+                        }`}
                     >
                       {/* Ribbon decorations */}
                       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-full bg-[#ff2a5f] opacity-80" />
@@ -387,14 +383,14 @@ export default function GiftChallenge() {
                 <>
                   <div className="absolute -top-12 -left-12 w-24 h-24 bg-[#d4af37]/10 rounded-full blur-xl" />
                   <div className="absolute -bottom-12 -right-12 w-24 h-24 bg-[#ff2a5f]/10 rounded-full blur-xl" />
-                  
+
                   <div className="flex justify-center mb-4">
                     <div className="p-4 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/20 relative">
                       <Trophy className="w-10 h-10 text-[#d4af37] animate-pulse" />
                       <Sparkles className="w-5 h-5 text-[#ff2a5f] absolute top-1 right-1 animate-ping" />
                     </div>
                   </div>
-                  
+
                   <h3 className="font-cinzel text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">
                     Congratulations!
                   </h3>

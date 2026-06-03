@@ -35,7 +35,7 @@ export default function Memories() {
     });
 
     // Animate cards individually on entrance
-    cards.forEach((card) => {
+    cards.forEach((card, index) => {
       gsap.fromTo(
         card,
         { opacity: 0, y: 50, scale: 0.9 },
@@ -95,7 +95,7 @@ export default function Memories() {
     <div ref={containerRef} id="memories" className="relative bg-[#050505]">
       {/* Sticky full-screen wrapper */}
       <div className="h-screen w-full overflow-hidden flex flex-col justify-center relative">
-        
+
         {/* Decorative background typography */}
         <div className="absolute top-20 left-12 font-cinzel text-white/5 text-7xl sm:text-9xl pointer-events-none font-bold uppercase tracking-widest select-none">
           Our Timeline
@@ -124,7 +124,7 @@ export default function Memories() {
               </span>
             </h2>
             <p className="text-white/60 font-light text-base leading-relaxed">
-              Every year spent with you is a treasure box of moments. Swipe or scroll down to wander through the beautiful chapters {"we've"} written together.
+              Every year spent with you is a treasure box of moments. Swipe or scroll down to wander through the beautiful chapters we've written together.
             </p>
           </div>
 
