@@ -18,6 +18,29 @@ const GIFTS: GiftItem[] = [
   { id: "lens", name: "Lens", emoji: "📷", color: "from-purple-500 to-pink-500" },
 ];
 
+const triggerConfetti = () => {
+  const duration = 3 * 1000;
+  const animationEnd = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+  const randomInRange = (min: number, max: number) => {
+    return Math.random() * (max - min) + min;
+  };
+
+  const interval = setInterval(() => {
+    const timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+
+    const particleCount = 50 * (timeLeft / duration);
+    // Confetti burst from both sides
+    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+  }, 250);
+};
+
 export default function GiftChallenge() {
   const [attempts, setAttempts] = useState<string[]>([]);
   const [shuffling, setShuffling] = useState(false);
@@ -31,7 +54,7 @@ export default function GiftChallenge() {
   const playAudioEffect = (type: "shuffle" | "open" | "win" | "lose") => {
     if (!soundEnabled) return;
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       
       if (type === "shuffle") {
         // Swoosh sound
@@ -94,28 +117,6 @@ export default function GiftChallenge() {
     }
   };
 
-  const triggerConfetti = () => {
-    const duration = 3 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
-
-    const randomInRange = (min: number, max: number) => {
-      return Math.random() * (max - min) + min;
-    };
-
-    const interval: any = setInterval(() => {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-      // Confetti burst from both sides
-      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
-      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-    }, 250);
-  };
 
   const startShuffle = () => {
     if (gameState === "finished") return;
@@ -208,7 +209,7 @@ export default function GiftChallenge() {
           </span>
         </h2>
         <p className="text-white/60 font-light text-sm sm:text-base max-w-xl mx-auto">
-          Test your luck! Pick a gift box. If you match the same gift twice in three attempts, it's yours!
+          Test your luck! Pick a gift box. If you match the same gift twice in three attempts, {"it's"} yours!
         </p>
       </div>
 

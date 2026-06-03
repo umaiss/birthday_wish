@@ -6,6 +6,25 @@ import { useEffect, useState } from "react";
 
 export default function Hero() {
   const [typedText, setTypedText] = useState("");
+  const [floatingBalloons, setFloatingBalloons] = useState<{
+    id: number;
+    x: number;
+    y: number;
+    delay: number;
+    duration: number;
+    size: number;
+    color: string;
+    driftX: number;
+  }[]>([]);
+  const [floatingHearts, setFloatingHearts] = useState<{
+    id: number;
+    x: number;
+    delay: number;
+    duration: number;
+    size: number;
+    rotateDrift: number;
+  }[]>([]);
+
   const fullText = "Today is all about you...";
 
   useEffect(() => {
@@ -18,36 +37,45 @@ export default function Hero() {
       }
     }, 120);
 
+    // Generate floating elements configuration only on client mount
+    const balloons = Array.from({ length: 8 }).map((_, i) => {
+      const xVal = Math.random() * 80 + 10;
+      return {
+        id: i,
+        x: xVal,
+        y: Math.random() * 50 + 50,
+        delay: Math.random() * 4,
+        duration: Math.random() * 10 + 15,
+        size: Math.random() * 30 + 20,
+        color: i % 2 === 0 ? "rgba(212, 175, 55, 0.4)" : "rgba(255, 42, 95, 0.4)",
+        driftX: xVal + (Math.random() - 0.5) * 10,
+      };
+    });
+    const hearts = Array.from({ length: 12 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 90 + 5,
+      delay: Math.random() * 5,
+      duration: Math.random() * 8 + 10,
+      size: Math.random() * 20 + 10,
+      rotateDrift: Math.random() * 45 - 22.5,
+    }));
+
+    requestAnimationFrame(() => {
+      setFloatingBalloons(balloons);
+      setFloatingHearts(hearts);
+    });
+
     return () => clearInterval(timeout);
   }, []);
 
   const handleNextSection = () => {
-    const lenis = (window as any).lenis;
+    const lenis = (window as unknown as { lenis?: { scrollTo: (target: string, options?: { offset?: number; duration?: number }) => void } }).lenis;
     if (lenis) {
       lenis.scrollTo("#memories", { offset: 0, duration: 1.5 });
     } else {
       document.getElementById("memories")?.scrollIntoView({ behavior: "smooth" });
     }
   };
-
-  // Generate floating elements configuration
-  const floatingBalloons = Array.from({ length: 8 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 80 + 10, // percentage width
-    y: Math.random() * 50 + 50, // initial height
-    delay: Math.random() * 4,
-    duration: Math.random() * 10 + 15,
-    size: Math.random() * 30 + 20,
-    color: i % 2 === 0 ? "rgba(212, 175, 55, 0.4)" : "rgba(255, 42, 95, 0.4)",
-  }));
-
-  const floatingHearts = Array.from({ length: 12 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 90 + 5,
-    delay: Math.random() * 5,
-    duration: Math.random() * 8 + 10,
-    size: Math.random() * 20 + 10,
-  }));
 
   return (
     <section
@@ -70,7 +98,7 @@ export default function Hero() {
           animate={{
             y: "-20vh",
             opacity: [0, 0.8, 0.8, 0],
-            x: [`${balloon.x}%`, `${balloon.x + (Math.random() - 0.5) * 10}%`],
+            x: [`${balloon.x}%`, `${balloon.driftX}%`],
           }}
           transition={{
             duration: balloon.duration,
@@ -95,7 +123,7 @@ export default function Hero() {
             y: "-10vh",
             scale: [0.5, 1.2, 1, 0.5],
             opacity: [0, 0.6, 0.6, 0],
-            rotate: [0, Math.random() * 45 - 22.5],
+            rotate: [0, heart.rotateDrift],
           }}
           transition={{
             duration: heart.duration,

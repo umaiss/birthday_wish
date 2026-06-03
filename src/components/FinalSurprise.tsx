@@ -37,10 +37,10 @@ export default function FinalSurprise() {
   ]);
   const [wished, setWished] = useState(false);
 
-  // Play synthesized puff sound
   const playPuffSound = () => {
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const webkitCtx = (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const ctx = new (window.AudioContext || webkitCtx)();
       const bufferSize = ctx.sampleRate * 0.15;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -70,7 +70,8 @@ export default function FinalSurprise() {
 
   const playChimeSound = () => {
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const webkitCtx = (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const ctx = new (window.AudioContext || webkitCtx)();
       const notes = [523.25, 659.25, 783.99, 1046.50];
       notes.forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -107,11 +108,12 @@ export default function FinalSurprise() {
     );
   };
 
-  // Check if all candles are blown out
   useEffect(() => {
     const activeCandles = candles.filter((c) => c.lit);
     if (activeCandles.length === 0 && !wished) {
-      setWished(true);
+      requestAnimationFrame(() => {
+        setWished(true);
+      });
       playChimeSound();
       // Blast massive confetti
       confetti({
@@ -131,7 +133,7 @@ export default function FinalSurprise() {
     ]);
     setWished(false);
 
-    const lenis = (window as any).lenis;
+    const lenis = (window as unknown as { lenis?: { scrollTo: (target: string, options?: { offset?: number; duration?: number }) => void } }).lenis;
     if (lenis) {
       lenis.scrollTo("#hero", { offset: 0, duration: 2.0 });
     } else {
@@ -334,9 +336,8 @@ export default function FinalSurprise() {
 
           {/* The Cake */}
           <div className="w-64 h-56 relative flex flex-col justify-end items-center mt-6">
-            
-            {/* Candles Placement */}
-            <div className="absolute bottom-36 flex justify-center gap-8 w-full z-10">
+                 {/* Candles Placement */}
+            <div className="absolute bottom-36 flex justify-center gap-8 w-full z-40">
               {candles.map((candle) => (
                 <div
                   key={candle.id}
@@ -380,13 +381,13 @@ export default function FinalSurprise() {
             {/* Cake Tiers (CSS-styled stacking cylinders) */}
             
             {/* Top Tier (Smallest) */}
-            <div className="w-36 h-12 bg-gradient-to-r from-pink-400 to-pink-500 rounded-full border border-pink-300/20 shadow-md relative z-3">
+            <div className="w-36 h-12 bg-gradient-to-r from-pink-400 to-pink-500 rounded-full border border-pink-300/20 shadow-md relative z-30">
               {/* Dripping frosting effect */}
               <div className="absolute bottom-0 left-0 w-full h-3 bg-pink-600 rounded-b-xl opacity-80" />
             </div>
 
             {/* Middle Tier */}
-            <div className="w-48 h-16 bg-gradient-to-r from-amber-600 to-amber-700 rounded-full border border-amber-500/20 -mt-6 shadow-lg relative z-2">
+            <div className="w-48 h-16 bg-gradient-to-r from-amber-600 to-amber-700 rounded-full border border-amber-500/20 -mt-6 shadow-lg relative z-20">
               <div className="absolute bottom-0 left-0 w-full h-4 bg-amber-800 rounded-b-xl opacity-80" />
               {/* Golden sprinkles decorations */}
               <div className="absolute top-2 left-6 w-1.5 h-1.5 bg-[#d4af37] rounded-full" />
@@ -395,7 +396,7 @@ export default function FinalSurprise() {
             </div>
 
             {/* Bottom Tier (Largest) */}
-            <div className="w-60 h-20 bg-gradient-to-r from-[#ff2a5f] to-[#ff2a5f] rounded-full border border-pink-500/20 -mt-8 shadow-2xl relative z-1">
+            <div className="w-60 h-20 bg-gradient-to-r from-[#ff2a5f] to-[#ff2a5f] rounded-full border border-pink-500/20 -mt-8 shadow-2xl relative z-10">
               <div className="absolute bottom-0 left-0 w-full h-5 bg-rose-900 rounded-b-xl opacity-85" />
               {/* Golden sprinkles */}
               <div className="absolute top-4 left-12 w-2 h-2 bg-[#d4af37] rounded-full" />

@@ -35,7 +35,7 @@ export default function Memories() {
     });
 
     // Animate cards individually on entrance
-    cards.forEach((card, index) => {
+    cards.forEach((card) => {
       gsap.fromTo(
         card,
         { opacity: 0, y: 50, scale: 0.9 },
@@ -124,7 +124,7 @@ export default function Memories() {
               </span>
             </h2>
             <p className="text-white/60 font-light text-base leading-relaxed">
-              Every year spent with you is a treasure box of moments. Swipe or scroll down to wander through the beautiful chapters we've written together.
+              Every year spent with you is a treasure box of moments. Swipe or scroll down to wander through the beautiful chapters {"we've"} written together.
             </p>
           </div>
 
